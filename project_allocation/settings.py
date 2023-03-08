@@ -25,10 +25,12 @@ SECRET_KEY = 'django-insecure-%*6#mu21wsrb3&qp1ggio07jm3oadjr8mn8k@5569o)5q^cp6$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
-# Application definition
+# Application definition 
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -37,12 +39,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'rule_engine',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -67,6 +74,57 @@ TEMPLATES = [
     },
 ]
 
+
+# Logging application information, error and debug details into file
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters':{
+        'simple':{
+            'format': "%(asctime)s - %(name)s -%(levelname)s - %(message)s"
+        }
+    },
+    'handlers':{
+        'console':{
+            'class': 'logging.StreamHandler',
+            'level': 'DEBUG',
+            'formatter': 'simple',
+            'stream': 'ext://sys.stdout',
+        },
+        'info_file_handler':{
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'level': 'INFO',
+            'formatter': 'simple',
+            'filename':'media/log/info.log',
+            'when': 'D',
+            'interval': 7,
+            'backupCount': 0,
+            'encoding': 'utf8',
+        },
+        'error_file_handler':{
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'level': 'ERROR',
+            'formatter': 'simple',
+            'filename':'media/log/info.log',
+            'when': 'D',
+            'interval': 7,
+            'backupCount': 0,
+            'encoding': 'utf8',
+        },
+    },
+    'loggers':{
+        'django':{
+            'level': 'ERROR',
+            'handlers': ['console'],
+            'propagate': 'no',
+        },
+    },
+    'root':{
+        'level': 'INFO',
+        'handlers': ['console', 'info_file_handler','error_file_handler']
+    }
+}
+
 WSGI_APPLICATION = 'project_allocation.wsgi.application'
 
 
@@ -74,9 +132,13 @@ WSGI_APPLICATION = 'project_allocation.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+   'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'api_v1',
+        'USER': 'postgres',
+        'PASSWORD': 'iopex@123',
+        'HOST': '0.0.0.0',
+        'PORT': '5432'  # set to empty string for default
     }
 }
 
@@ -99,6 +161,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
