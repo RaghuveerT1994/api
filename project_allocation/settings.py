@@ -162,10 +162,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
+    # 'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+        'rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication',
+    ),
+    'DEFAULT_SCHEMA_CLASS':'rest_framework.schemas.coreapi.AutoSchema',
+
 }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
@@ -188,3 +193,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LIMIT = 100
+OFFSET = 0

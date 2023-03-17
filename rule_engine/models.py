@@ -147,3 +147,20 @@ class TBLRulesAudit(models.Model):
     class Meta:
         db_table = 'tbl_rules_audit'
 
+
+class CommonMaster(models.Model):
+    cm_id = models.AutoField(primary_key=True, db_index=True)
+    cm_type= models.CharField(max_length=200, blank=True, null=True)
+    cm_name= models.CharField(max_length=200, blank=True, null=True)
+    cm_value= models.CharField(max_length=200, blank=True, null=True)
+    cm_order= models.IntegerField(blank=True, null=True)
+    extras= models.JSONField(default=dict, blank=True, null=True)
+    is_deleted= models.BooleanField(default=False, null=True, blank=True)
+    isActive= models.BooleanField(default=False, null=True, blank=True)
+    created_user= models.IntegerField(blank=False, null=False)
+    created_at= models.DateTimeField(default=timezone.now, null=True, blank=True)
+    updated_user= models.IntegerField(blank=True, null=True)
+    updated_at= models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'tbl_common_master'

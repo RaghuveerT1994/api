@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from rule_engine.views import RuleEngineView
+from rule_engine.views import RuleEngineView, CommonMasterView
+from rule_engine.rules_set import RuleSetEngineView 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -26,5 +27,17 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('rule/engine/create/', RuleEngineView.as_view({'post': 'create'})),
+    path('common/list/', CommonMasterView.as_view({'post': 'list'})),
+
+    path('rule/engine/list/', RuleEngineView.as_view({'post': 'list'})),
+    path('rule/engine/create/', RuleEngineView.as_view({'post': 'create'})), 
+    path('rule/engine/view/', RuleEngineView.as_view({'post': 'view'})),  
+    path('rule/engine/delete/', RuleEngineView.as_view({'post': 'delete'})),
+    path('rule/engine/update/', RuleEngineView.as_view({'post': 'update'})), 
+
+    path('rule/set/list/', RuleSetEngineView.as_view({'post': 'list'})),
+    path('rule/set/create/', RuleSetEngineView.as_view({'post': 'create'})), 
+    path('rule/set/view/', RuleSetEngineView.as_view({'post': 'view'})),  
+    path('rule/set/delete/', RuleSetEngineView.as_view({'post': 'delete'})),
+    path('rule/set/update/', RuleSetEngineView.as_view({'post': 'update'})), 
 ]
