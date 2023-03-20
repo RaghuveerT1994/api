@@ -24,11 +24,14 @@ class RuleSetEngineView(ViewSet):
             result = []
             limit = settings.LIMIT
             offset = settings.OFFSET
+            if "rules_id" not in request.data or not request.data['rules_id']:
+                return Response({"error": True, "message": "Rules Id is required", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+           
             if 'offset' in request.data and request.data['offset']:
                 offset = request.data['offset']
             if 'limit' in request.data and request.data['limit']:
                 limit = request.data['limit']
-            # search_content    
+            condition &=  Q(rules_id = request.data['rules_id'])  
             if "search_content" in request.data and request.data['search_content'] :
                 or_condition = Q(rules_set_name__icontains = request.data['search_content'])
                 # or_condition.add(Q(destination_connection_id__in = Connection.objects.filter(name__icontains = request.data['search_content']).values_list('connection_id', flat=True)), Q.OR)
@@ -69,22 +72,24 @@ class RuleSetEngineView(ViewSet):
         try:
             log.info(request.data)
             insert_data = {}
-            if "rules_name" not in request.data or not request.data['rules_name']:
-                return Response({"error": True, "message": "Rules name is required", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+            if "rules_id" not in request.data or not request.data['rules_id']:
+                return Response({"error": True, "message": "Rules Id is required", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+
+            rules_query = TBLRules.objects.get(pk=request.data['rules_id'], is_deleted=False)
+            if not rules_query:  
+                return Response({"error": True, "message": "Rules  is not Found", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+
+            if "rules_set_name" not in request.data or not request.data['rules_set_name']:
+                return Response({"error": True, "message": "Rules set name is required", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
             
-            if "rules_name" in request.data and request.data['rules_name']:
-                model_name = TBLRules.objects.filter(rules_name=request.data['rules_name'].strip())
+            if "rules_set_name" in request.data and request.data['rules_set_name']:
+                model_name = TBLRulesSet.objects.filter(rules_set_name=request.data['rules_set_name'].strip())
                 if model_name:  
-                    return Response( {"error": True, "message": "Rules name already exists ", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
-            insert_data['rules_name'] = request.data['rules_name'].strip()
-            insert_data['rules_sequence'] = request.data['rules_sequence']
-            if "rule_type" in request.data and request.data['rule_type']:
-                if request.data['rule_type'] == '1':
-                    insert_data['isOpty'] = True
-                else:    
-                    insert_data['isOpty'] = False
-            else:    
-                insert_data['isOpty'] = True
+                    return Response( {"error": True, "message": "Rules set name already exists ", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+            insert_data['rules_set_name'] = request.data['rules_set_name'].strip()
+            insert_data['rules_set_sequence'] = request.data['rules_set_sequence']
+            if "rules_id" in request.data and request.data['rules_id']:
+                insert_data['rules_id'] = request.data['rules_id']
 
             if "extra" in request.data and request.data['extra']:
                 insert_data['extra'] = request.data['extra']  
@@ -100,10 +105,10 @@ class RuleSetEngineView(ViewSet):
             insert_data['updated_user'] = 1
             insert_data['updated_at']=datetime.datetime.now()
             print(insert_data)
-            data_save = TBLRulesSerializer(data = insert_data)  
+            data_save = TBLRulesSetSerializer(data = insert_data)  
             if data_save.is_valid():
                 tm_inserted_id=data_save.save()  
-                data = { "rules_id" : tm_inserted_id.rules_id }   
+                data = { "rules_set_id" : tm_inserted_id.rules_set_id }   
                 return Response( {"error": False, "message": "success", "data" : data } , status=status.HTTP_200_OK)
             else:
                 return Response({"error": True, "message": str(data_save.errors), "status": 400}, status=status.HTTP_400_BAD_REQUEST)   
