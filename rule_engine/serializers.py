@@ -28,4 +28,5 @@ class TBLRulesSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = TBLRulesSet
         fields = ('rules_set_id', 'rules_set_name', 'rules_set_sequence', 'rules_id', 'extras', 'is_deleted', 'isActive',  'created_user', 'created_at', 'updated_user', 'updated_at')
+
  

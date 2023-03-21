@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from rule_engine.views import RuleEngineView, CommonMasterView
+from account.views import UserOperationView
 from rule_engine.rules_set import RuleSetEngineView 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -40,4 +41,11 @@ urlpatterns = [
     path('rule/set/view/', RuleSetEngineView.as_view({'post': 'view'})),  
     path('rule/set/delete/', RuleSetEngineView.as_view({'post': 'delete'})),
     path('rule/set/update/', RuleSetEngineView.as_view({'post': 'update'})), 
+
+    path('users/create/', UserOperationView.as_view({'post':'create'})), # in default django user
+    path('users/update/', UserOperationView.as_view({'post':'update'})),
+    path('users/delete/', UserOperationView.as_view({'post':'delete'})),
+    path('users/list/', UserOperationView.as_view({'post':'list'})),
+    path('users/view/', UserOperationView.as_view({'post':'view'})),
+    path('users/changepassword/', UserOperationView.as_view({'post':'changepassword'})),
 ]
