@@ -5,7 +5,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework import serializers, status
 from django.db.models import Q
 from django.conf import settings
-from rule_engine.serializers import userSerializer,userShowSerializer,userDeleteSerializer,UserChangePasswordSerializer
+from serializers import userSerializer,userShowSerializer,userDeleteSerializer,UserChangePasswordSerializer
 import re
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
