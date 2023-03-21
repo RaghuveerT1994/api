@@ -28,4 +28,25 @@ class TBLRulesSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = TBLRulesSet
         fields = ('rules_set_id', 'rules_set_name', 'rules_set_sequence', 'rules_id', 'extras', 'is_deleted', 'isActive',  'created_user', 'created_at', 'updated_user', 'updated_at')
+
+class userSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta():
+        model=User
+        fields=("username","first_name", "last_name","email","password","is_staff","is_active","is_superuser")
+   
+    
+class userShowSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta():
+        model=User
+        fields=("id","username","first_name", "last_name","email","is_staff","is_active","is_superuser")
+
+class userDeleteSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta():
+        model=User
+        fields=("id","is_active")
+
+class UserChangePasswordSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta():
+        model=User
+        fields=("id","password")
  
