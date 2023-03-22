@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from rule_engine.views import RuleEngineView, CommonMasterView
+from account.views import UserOperationView
 from rule_engine.rules_set import RuleSetEngineView 
 from connection.views import ConnectionHistoryView, ConnectionViewSet, NlpAnalysisView
 
@@ -53,4 +54,12 @@ urlpatterns = [
     path('connection/datamap/view/<connection_id>', ConnectionViewSet.as_view({'get': 'datamap_view'})),
     path('connection/list/', ConnectionViewSet.as_view({'post': 'connection_list'})),
     path('connection/history/list', ConnectionHistoryView.as_view({'post': 'list'})),
+
+    path('users/create/', UserOperationView.as_view({'post':'create'})), # in default django user
+    path('users/update/', UserOperationView.as_view({'post':'update'})),
+    path('users/delete/', UserOperationView.as_view({'post':'delete'})),
+    path('users/list/', UserOperationView.as_view({'post':'list'})),
+    path('users/view/', UserOperationView.as_view({'post':'view'})),
+    path('users/changepassword/', UserOperationView.as_view({'post':'changepassword'})),
+    
 ]
