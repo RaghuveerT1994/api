@@ -130,27 +130,24 @@ class RuleSetEngineView(ViewSet):
         """
         try:
             log.info(request.data)
-            if "rules_id" not in request.data or not request.data['rules_id']:
-                return Response({"error": True, "message": "Rules Id is required", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+            if "rules_set_id" not in request.data or not request.data['rules_set_id']:
+                return Response({"error": True, "message": "Rules set Id is required", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
            
-            if "rules_name" not in request.data or not request.data['rules_name']:
+            if "rules_set_name" not in request.data or not request.data['rules_set_name']:
                 return Response({"error": True, "message": "Rules name is required", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
             
-            if "rules_name" in request.data and request.data['rules_name']:
-                model_name = TBLRules.objects.filter(rules_name=request.data['rules_name'].strip(), is_deleted=False).exclude(rules_id = request.data['rules_id'])
+            if "rules_set_name" in request.data and request.data['rules_set_name']:
+                model_name = TBLRulesSet.objects.filter(rules_set_name=request.data['rules_set_name'].strip(), is_deleted=False).exclude(rules_set_id = request.data['rules_set_id'])
                 if model_name:  
                     return Response( {"error": True, "message": "Rules name already exists ", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
-            get_data = TBLRules.objects.get(pk = request.data['rules_id'], is_deleted=False)
+            get_data = TBLRulesSet.objects.get(pk = request.data['rules_set_id'], is_deleted=False)
             if get_data:    
-                if request.data['rules_name'].strip():
-                    get_data.rules_name = request.data['rules_name'].strip()
-                if request.data['rules_sequence']:    
-                    get_data.rules_sequence = request.data['rules_sequence']
-                if "rule_type" in request.data and request.data['rule_type']:
-                    if request.data['rule_type'] == '1':
-                        get_data.isOpty = True
-                    else:    
-                        get_data.isOpty = False
+                if request.data['rules_set_name'].strip():
+                    get_data.rules_set_name = request.data['rules_set_name'].strip()
+                # if request.data['rules_id']:    
+                #     get_data.rules_id = request.data['rules_id']
+                if request.data['rules_set_sequence']:    
+                    get_data.rules_set_sequence = request.data['rules_set_sequence']
                 if "extra" in request.data and request.data['extra']:
                     get_data.extra = request.data['extra']  
                 if "status" in request.data and request.data['status']:
@@ -161,7 +158,7 @@ class RuleSetEngineView(ViewSet):
                 get_data.updated_user = 1
                 get_data.updated_at=datetime.datetime.now()
                 get_data.save()
-                data = { "rules_id" : request.data['rules_id'] }   
+                data = { "rules_set_id" : request.data['rules_set_id'] }   
                 return Response( {"error": False, "message": "success", "data" : data } , status=status.HTTP_200_OK)
                 # else:
                 #     return Response({"error": True, "message": str(data_save.errors), "status": 400}, status=status.HTTP_400_BAD_REQUEST)   

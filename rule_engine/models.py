@@ -57,7 +57,7 @@ class TBLRulesConfiguration(models.Model):
     rules_set_sequence= models.IntegerField(blank=True, null=True)  
     condition_sequence= models.IntegerField(blank=True, null=True)  
     function_id = models.ForeignKey(TBLRuleFunctionsOperation, db_column='function_id', on_delete=models.CASCADE, blank=False, null=False)
-    rules_id= models.ForeignKey(TBLRules, db_column='rules_id', on_delete=models.CASCADE, blank=False, null=False)
+    rules_set_id= models.ForeignKey(TBLRulesSet, db_column='rules_set_id', on_delete=models.CASCADE, blank=False, null=False)
     isUiVisible= models.BooleanField(default=False, null=True, blank=True)
     extras= models.JSONField(default=dict, blank=True, null=True)
     is_deleted= models.BooleanField(default=False, null=True, blank=True)
