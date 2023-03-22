@@ -77,7 +77,7 @@ class RuleEngineView(ViewSet):
                         isOpty = CommonMaster.objects.filter(cm_type = 'rules_type', cm_value=2).values('cm_name')
                         if isOpty:
                             t_set['rule_type'] = isOpty[0]['cm_name']
-                    t_set['rule_set_count'] = TBLRulesSet.objects.filter(rules_id = t_set['rules_id'], is_deleted= False, isActive=True).count()
+                    t_set['rule_set_count'] = TBLRulesSet.objects.filter(rules_id = t_set['rules_id'], is_deleted= False).count()
                     result.append(t_set)
             response_content["count"] = total_count 
             response_content["active_count"] = active_count 

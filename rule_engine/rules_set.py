@@ -5,7 +5,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework import serializers, status
 from django.db.models import Q
 from django.conf import settings
-from rule_engine.models import TBLRules, CommonMaster, TBLRulesSet
+from rule_engine.models import TBLRules, CommonMaster, TBLRulesSet, TBLRulesConfiguration
 from rule_engine.serializers import TBLRulesSerializer, CommonMasterSerializer, TBLRulesSetSerializer
 import logging
 import datetime
@@ -38,7 +38,8 @@ class RuleSetEngineView(ViewSet):
                 condition &= or_condition
             active_count = TBLRulesSet.objects.filter(condition, isActive=True).count()
             total_count = TBLRulesSet.objects.filter(condition).count()
-            query_set = TBLRulesSet.objects.filter(condition).order_by('-rules_set_id')[int(offset):int(offset) + int(limit)]
+            query_set = TBLRulesSet.objects.filter(condition).order_by('-rules_set_id')
+            # [int(offset):int(offset) + int(limit)]
             serializer = TBLRulesSetSerializer(query_set, many=True)
             if serializer.data :    
                 for t_set in serializer.data:
@@ -50,7 +51,7 @@ class RuleSetEngineView(ViewSet):
                         isActive = CommonMaster.objects.filter(cm_type = 'rules_set_status', cm_value=2).values('cm_name')
                         if isActive:
                             t_set['status_name'] = isActive[0]['cm_name']
-                   
+                    # TBLRulesConfiguration
                     t_set['conditions_set_count'] = 1
                     result.append(t_set)
             response_content["count"] = total_count 
@@ -129,27 +130,24 @@ class RuleSetEngineView(ViewSet):
         """
         try:
             log.info(request.data)
-            if "rules_id" not in request.data or not request.data['rules_id']:
-                return Response({"error": True, "message": "Rules Id is required", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+            if "rules_set_id" not in request.data or not request.data['rules_set_id']:
+                return Response({"error": True, "message": "Rules set Id is required", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
            
-            if "rules_name" not in request.data or not request.data['rules_name']:
+            if "rules_set_name" not in request.data or not request.data['rules_set_name']:
                 return Response({"error": True, "message": "Rules name is required", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
             
-            if "rules_name" in request.data and request.data['rules_name']:
-                model_name = TBLRules.objects.filter(rules_name=request.data['rules_name'].strip(), is_deleted=False).exclude(rules_id = request.data['rules_id'])
+            if "rules_set_name" in request.data and request.data['rules_set_name']:
+                model_name = TBLRulesSet.objects.filter(rules_set_name=request.data['rules_set_name'].strip(), is_deleted=False).exclude(rules_set_id = request.data['rules_set_id'])
                 if model_name:  
                     return Response( {"error": True, "message": "Rules name already exists ", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
-            get_data = TBLRules.objects.get(pk = request.data['rules_id'], is_deleted=False)
+            get_data = TBLRulesSet.objects.get(pk = request.data['rules_set_id'], is_deleted=False)
             if get_data:    
-                if request.data['rules_name'].strip():
-                    get_data.rules_name = request.data['rules_name'].strip()
-                if request.data['rules_sequence']:    
-                    get_data.rules_sequence = request.data['rules_sequence']
-                if "rule_type" in request.data and request.data['rule_type']:
-                    if request.data['rule_type'] == '1':
-                        get_data.isOpty = True
-                    else:    
-                        get_data.isOpty = False
+                if request.data['rules_set_name'].strip():
+                    get_data.rules_set_name = request.data['rules_set_name'].strip()
+                # if request.data['rules_id']:    
+                #     get_data.rules_id = request.data['rules_id']
+                if request.data['rules_set_sequence']:    
+                    get_data.rules_set_sequence = request.data['rules_set_sequence']
                 if "extra" in request.data and request.data['extra']:
                     get_data.extra = request.data['extra']  
                 if "status" in request.data and request.data['status']:
@@ -160,7 +158,7 @@ class RuleSetEngineView(ViewSet):
                 get_data.updated_user = 1
                 get_data.updated_at=datetime.datetime.now()
                 get_data.save()
-                data = { "rules_id" : request.data['rules_id'] }   
+                data = { "rules_set_id" : request.data['rules_set_id'] }   
                 return Response( {"error": False, "message": "success", "data" : data } , status=status.HTTP_200_OK)
                 # else:
                 #     return Response({"error": True, "message": str(data_save.errors), "status": 400}, status=status.HTTP_400_BAD_REQUEST)   
@@ -182,24 +180,20 @@ class RuleSetEngineView(ViewSet):
             log.info(request.data)
             response_content = {"error": False, "message": "Success", "status": 200, "count": 0, "data": ""}
 
-            if "rules_id" not in request.data or not request.data['rules_id']:
+            if "rules_set_id" not in request.data or not request.data['rules_set_id']:
                 return Response({"error": True, "message": "Rules Id is required", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
-            get_data = TBLRules.objects.get(pk = request.data['rules_id'], is_deleted=False)
+            get_data = TBLRulesSet.objects.get(pk = request.data['rules_set_id'], is_deleted=False)
             if get_data:
                 result = []           
-                query_set = TBLRules.objects.filter(rules_id = request.data['rules_id'], is_deleted=False)
+                query_set = TBLRulesSet.objects.filter(rules_set_id = request.data['rules_set_id'], is_deleted=False)
                 print(query_set)
-                serializer = TBLRulesSerializer(query_set, many=True)
+                serializer = TBLRulesSetSerializer(query_set, many=True)
                 if serializer.data :    
                     for t_set in serializer.data:
                         if t_set['isActive']:
                             t_set['status_name'] = 1
                         else :    
                             t_set['status_name'] = 2
-                        if t_set['isOpty']:
-                            t_set['rule_type'] = 1
-                        else :    
-                            t_set['rule_type'] = 2
                         t_set['rule_set_count'] = 1
                         result = t_set
                 response_content["data"] = result            
@@ -220,10 +214,10 @@ class RuleSetEngineView(ViewSet):
         """
         response_content = {"error": True, "message": "", "status": status.HTTP_400_BAD_REQUEST}
         try:
-            if request.data['rules_id']:
+            if request.data['rules_set_id']:
                 # Application success content
                 try:
-                    rules_query = TBLRules.objects.get(pk=request.data['rules_id'], is_deleted=False)
+                    rules_query = TBLRulesSet.objects.get(pk=request.data['rules_set_id'], is_deleted=False)
                     if rules_query:                       
                         rules_query.is_deleted = True
                         # rules_query.updated_user = request.user.id
@@ -231,12 +225,12 @@ class RuleSetEngineView(ViewSet):
                         rules_query.updated_at = datetime.datetime.now()
                         rules_query.save()
 
-                        response_content['message'] = 'Rules Id: '+str(request.data['rules_id'])+' deleted successfully'
+                        response_content['message'] = 'Rules Set Id: '+str(request.data['rules_set_id'])+' deleted successfully'
                         response_content['error'] = False
                         response_content['status'] = status.HTTP_200_OK
                     else:
                         response_content['message'] = 'No record found'
-                except TBLRules.DoesNotExist:
+                except TBLRulesSet.DoesNotExist:
                     response_content['message'] = 'No record found'
                 except ValueError as e:
                     response_content['message'] = 'Invalid Rules id'
