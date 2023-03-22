@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from rule_engine.views import RuleEngineView, CommonMasterView
 from rule_engine.rules_set import RuleSetEngineView 
+from connection.views import ConnectionHistoryView, ConnectionViewSet, NlpAnalysisView
+
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -40,4 +42,15 @@ urlpatterns = [
     path('rule/set/view/', RuleSetEngineView.as_view({'post': 'view'})),  
     path('rule/set/delete/', RuleSetEngineView.as_view({'post': 'delete'})),
     path('rule/set/update/', RuleSetEngineView.as_view({'post': 'update'})), 
+
+    path('connection/', ConnectionViewSet.as_view({'get': 'list'})),
+    path('connection/create/', ConnectionViewSet.as_view({'post': 'create'})),
+    path('connection/new/', ConnectionViewSet.as_view({'get': 'new'})),
+    path('connection/update/<connection_id>', ConnectionViewSet.as_view({'put': 'update'})),
+    path('connection/delete/<connection_id>', ConnectionViewSet.as_view({'delete': 'delete'})),
+    path('connection/view/<connection_id>', ConnectionViewSet.as_view({'get': 'view'})),
+    path('connection/test', ConnectionViewSet.as_view({'post': 'test_connection'})),
+    path('connection/datamap/view/<connection_id>', ConnectionViewSet.as_view({'get': 'datamap_view'})),
+    path('connection/list/', ConnectionViewSet.as_view({'post': 'connection_list'})),
+    path('connection/history/list', ConnectionHistoryView.as_view({'post': 'list'})),
 ]
