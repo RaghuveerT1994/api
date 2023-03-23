@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from rule_engine.views import RuleEngineView, CommonMasterView
 from account.views import UserOperationView
+from account.userGroup import UserGroupsView
 from rule_engine.rules_set import RuleSetEngineView 
 from connection.views import ConnectionHistoryView, ConnectionViewSet, NlpAnalysisView
 
@@ -61,5 +62,13 @@ urlpatterns = [
     path('users/list/', UserOperationView.as_view({'post':'list'})),
     path('users/view/', UserOperationView.as_view({'post':'view'})),
     path('users/changepassword/', UserOperationView.as_view({'post':'changepassword'})),
+
+    path('users/creategroup/', UserGroupsView.as_view({'post':'create'})), # in default django user group
+    path('users/updategroup/', UserGroupsView.as_view({'post':'update'})),
+    path('users/deletegroup/', UserGroupsView.as_view({'post':'delete'})),
+    path('users/grouplist/', UserGroupsView.as_view({'post':'list'})),
+    path('users/groupview/', UserGroupsView.as_view({'post':'view'})),
+    path('users/addtogroup/', UserGroupsView.as_view({'post':'addToGroup'})),
+    path('users/removegroup/', UserGroupsView.as_view({'post':'removeGroup'})),
     
 ]
