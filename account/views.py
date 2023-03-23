@@ -5,12 +5,12 @@ from rest_framework.viewsets import ViewSet
 from rest_framework import serializers, status
 from django.db.models import Q
 from django.conf import settings
-from serializers import userSerializer,userShowSerializer,userDeleteSerializer,UserChangePasswordSerializer
+from account.serializers import userSerializer,userShowSerializer,userDeleteSerializer,UserChangePasswordSerializer
 import re
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import *
-from api.account.controller import userController
+from account.controller import userController
 
 
 
@@ -68,7 +68,7 @@ class UserOperationView(ViewSet):
                 if "id" in request.data and request.data['id']:
                     try:
                         existing_record = User.objects.get(pk=request.data['id'])
-                        updated_data = userController.Controller.updateUserDetails(self,request,self)
+                        updated_data = userController.UserController.updateUserDetails(self,request,self)
                         user_data = userSerializer(existing_record,data=updated_data,partial=True)
                         if user_data.is_valid():
                             obj = user_data.save()
@@ -152,7 +152,7 @@ class UserOperationView(ViewSet):
                 user_data = User.objects.get(pk=request.data['id'])
                 if user_data.is_superuser ==True and user_data.is_active == True:
                     if request.data['password'] and request.data['confirmpassword'] and 'password' in request.data:
-                        pass_data = userController.Controller.changepassword(self,request,self.pass_reg)
+                        pass_data = userController.UserController.changepassword(self,request,self.pass_reg)
                         if 'error' in pass_data:
                             return Response({"error":True , "Message" : "please put valid password and confirmpassword and both sould match" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
                         cp_details = UserChangePasswordSerializer(user_data,data = pass_data)
