@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rule_engine',
     'connection',
+    'account',
 ]
 
 MIDDLEWARE = [
