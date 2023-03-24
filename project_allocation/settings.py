@@ -141,11 +141,11 @@ DATABASES = {
         # 'PASSWORD': 'iopex@123',
         # 'HOST': '0.0.0.0',
         # 'PORT': '5432'  # set to empty string for default
-        'NAME': str(os.environ.get('DB_NAME', 'allocation')),
+        'NAME': str(os.environ.get('DB_NAME', 'api_v1')),
         'USER': str(os.environ.get('DB_USER', 'postgres')),
         'PASSWORD': str(os.environ.get('DB_PASSWORD', 'iopex@123')),
-        'HOST': str(os.environ.get('DB_HOST','192.168.1.5')),
-        'PORT': str(os.environ.get('DB_PORT', '5431'))   
+        'HOST': str(os.environ.get('DB_HOST','0.0.0.0')),
+        'PORT': str(os.environ.get('DB_PORT', '5432'))   
     }
 }
 
