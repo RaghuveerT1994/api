@@ -213,13 +213,13 @@ class ConnectionViewSet(ViewSet):
             # Application success content
             response_content = {"error":False, "message":"success", "data": "", "status":200}
             condition = Q(is_deleted= False)
-            log.info("User Email - {}".format(request.user.email))
-            group_members = AuthView.get_user_specific_roles(self, request.user.email, client_id = "opexwiseapi")
-            log.info("Group members - {}".format(group_members))
-            if isinstance(group_members, list) and "all" not in group_members:
-                condition &= Q(created_by__in = group_members)
-            elif not group_members:
-                condition &= Q(created_by = request.user.id)
+            # log.info("User Email - {}".format(request.user.email))
+            # group_members = AuthView.get_user_specific_roles(self, request.user.email, client_id = "opexwiseapi")
+            # log.info("Group members - {}".format(group_members))
+            # if isinstance(group_members, list) and "all" not in group_members:
+            #     condition &= Q(created_by__in = group_members)
+            # elif not group_members:
+            #     condition &= Q(created_by = request.user.id)
             query_set = Connection.objects.filter(condition).all()
             serializer = ConnectionListSerializer(query_set, many= True)
 
@@ -340,8 +340,10 @@ class ConnectionViewSet(ViewSet):
                     #connection = Connection.objects.get(pk = connection_id, is_deleted=False, status=StatusEnum.Active.value)
                     connection = Connection.objects.get(pk=connection_id, is_deleted=False)
                     if connection:
-                        source_datamap = DataMap.objects.filter(source_connection_id=connection_id, is_deleted=False)
-                        destination_datamap = DataMap.objects.filter(destination_connection_id=connection_id, is_deleted=False)
+                        source_datamap = ''
+                        destination_datamap = ''
+                        # source_datamap = DataMap.objects.filter(source_connection_id=connection_id, is_deleted=False)
+                        # destination_datamap = DataMap.objects.filter(destination_connection_id=connection_id, is_deleted=False)
                         if source_datamap or destination_datamap:
                             response_content['message'] = "Cannot delete Connection if it is active in Data mapping"
                         else:
@@ -499,13 +501,13 @@ class ConnectionViewSet(ViewSet):
             # Application success content
             response_content = {"error":False, "message":"success", "data": "", "status":200}
             condition = Q(is_deleted= False)
-            log.info("User Email - {}".format(request.user.email))
-            group_members = AuthView.get_user_specific_roles(self, request.user.email, client_id = "opexwiseapi")
-            log.info("Group members - {}".format(group_members))
-            if isinstance(group_members, list) and "all" not in group_members:
-                condition &= Q(created_by__in = group_members)
-            elif not group_members:
-                condition &= Q(created_by = request.user.id)
+            # log.info("User Email - {}".format(request.user.email))
+            # group_members = AuthView.get_user_specific_roles(self, request.user.email, client_id = "opexwiseapi")
+            # log.info("Group members - {}".format(group_members))
+            # if isinstance(group_members, list) and "all" not in group_members:
+            #     condition &= Q(created_by__in = group_members)
+            # elif not group_members:
+            #     condition &= Q(created_by = request.user.id)
             if "search_content" in request.data and request.data['search_content'] :
                 or_condition = Q(name__icontains = request.data['search_content'])
                 or_condition.add(Q(connection_id__icontains = request.data['search_content']), Q.OR)
