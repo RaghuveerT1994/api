@@ -1,0 +1,39 @@
+version: '2.1'
+networks:
+  iopex_network:
+services:
+  allocationapi:
+    # image: iopexlabs/allocation_api:2.1
+    build : ./api_v1
+    networks:
+      - iopex_network
+    restart: on-failure:5
+    depends_on:
+      - allocation_db
+    ports:
+     - 8030:80
+    volumes:
+      - ./media:/var/opt/media
+    environment:
+      DB_NAME: allocation
+      DB_USER: postgres
+      DB_PASSWORD: iopex@123
+      DB_HOST: 192.168.1.5
+      DB_PORT: 5431
+    #healthcheck:
+    #  test: pgrep -f nginx || exit 1
+    #  interval: 10m
+    #  timeout: 10s
+    #  retries: 3
+  allocation_db:
+    image: postgres:12
+    networks:
+      - iopex_network
+    restart: on-failure:5
+    volumes:
+      - "./db_data/data:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_DB: allocation
+      POSTGRES_PASSWORD: iopex@123
+    ports:
+      - 5431:5432
