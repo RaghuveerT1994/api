@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -135,11 +136,16 @@ WSGI_APPLICATION = 'project_allocation.wsgi.application'
 DATABASES = {
    'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'api_v1',
-        'USER': 'postgres',
-        'PASSWORD': 'iopex@123',
-        'HOST': '0.0.0.0',
-        'PORT': '5432'  # set to empty string for default
+        # 'NAME': 'api_v1',
+        # 'USER': 'postgres',
+        # 'PASSWORD': 'iopex@123',
+        # 'HOST': '0.0.0.0',
+        # 'PORT': '5432'  # set to empty string for default
+        'NAME': str(os.environ.get('DB_NAME', 'allocation')),
+        'USER': str(os.environ.get('DB_USER', 'postgres')),
+        'PASSWORD': str(os.environ.get('DB_PASSWORD', 'iopex@123')),
+        'HOST': str(os.environ.get('DB_HOST','192.168.1.5')),
+        'PORT': str(os.environ.get('DB_PORT', '5431'))   
     }
 }
 
