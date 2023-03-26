@@ -46,14 +46,11 @@ class RuleEngineFunctionalOperationView(ViewSet):
 
     def update(self,request):
         try:
-            print("inside try1")
             log.info("ApiCallController api update record")
             if request.method == "POST":  
                 if request.data:
                     try:
-                        print("inside try")
                         existing_record = TBLRuleFunctionsOperation.objects.get(functions_id=request.data['functions_id'])
-                        print(existing_record)
                         updated_data = RuleFunctionalOperationsController.ruleFunctionalOperationsDetails(self,request)
                         user_data = TBLRulesFunctionOperationSerializer(existing_record,data=updated_data,partial=True)
                         if user_data.is_valid():

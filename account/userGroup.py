@@ -6,6 +6,7 @@ from rest_framework import serializers, status
 from django.db.models import Q
 from django.contrib.auth.models import User,Group,Permission
 from django.contrib.auth import *
+from account.serializers import GroupSerializer
 
 
 
@@ -50,7 +51,6 @@ class UserGroupsView(ViewSet):
                 group = Group.objects.get(id=request.data['groupId'])
             else:
                 return Response({"error" : True , "Message" : "group has't been updated  groupId required" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
-
             if "groupName" in request.data and request.data["groupName"]:
                 group.name = request.data["groupName"]
                 group.save()
@@ -66,12 +66,23 @@ class UserGroupsView(ViewSet):
         try:
             log.info("ApiCallController api create user group")
             if "groupId" in request.data and request.data["groupId"]:
-                unused_group = Group.objects.get(id=request.data["groupId"])
-                unused_group.delete()
-                return Response({"error" : False , "Message": "group deleted successfully","status": 200}, status=status.HTTP_200_OK)
+                unused_group = Group.objects.get(id=request.data["groupId"],is_deleted=False)
+                active_group_user = unused_group.user_set.all()
+                print(unused_group)
+                if active_group_user:
+                    return Response({"error":True , "Message" : "some user still mapped to the group" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                if unused_group:
+                        del_group = {
+                            "is_deleted":"True"
+                        }
+                        datas = GroupSerializer(unused_group,data=del_group,partial=True)
+                        if datas.is_valid():
+                            obj = datas.save()
+                            return Response({"error" : False , "Message": "group deleted successfully","status": 200}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"error":True , "Message" : "please provide existing group id " , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({"error":True , "Message" : "please provide existing group id " , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
-        
         except Exception as ex:
             log.error(ex)
             return Response({"error":True , "Message" : f"we would like to inform you {ex}" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
@@ -79,7 +90,7 @@ class UserGroupsView(ViewSet):
     def list(self,request):
         try:
             log.info("ApiCallController api create user group")
-            datas=Group.objects.filter().values()
+            datas=Group.objects.filter(is_deleted=False).values()
             print(datas)
             if datas:
                 return Response({"error" : False , "Message": "successfully","status": 200,"data":datas}, status=status.HTTP_200_OK)
@@ -96,7 +107,7 @@ class UserGroupsView(ViewSet):
             log.info("ApiCallController api create user group")
             if request.data["groupId"] and "groupId" in request.data:
                 try:
-                    datas=Group.objects.filter(id=request.data["groupId"]).values()
+                    datas=Group.objects.filter(id=request.data["groupId"],is_deleted=False).values()
                     if datas:
                         return Response({"error" : False , "Message": "successfull","status": 200,"data":datas}, status=status.HTTP_200_OK)
                     else:
@@ -113,8 +124,8 @@ class UserGroupsView(ViewSet):
     def addToGroup(self,request):
         try:
             log.info("ApiCallController api assign user group")
-            group =Group.objects.get(id=request.data["groupId"])
-            user = User.objects.get(id=request.data["userId"])
+            group =Group.objects.get(id=request.data["groupId"],is_deleted=False)
+            user = User.objects.get(id=request.data["userId"],is_deleted=False)
             if group and user:
                 user.groups.add(group)
                 return Response({"error" : False , "Message": "user added successfully to the group","status": 200}, status=status.HTTP_200_OK)
@@ -127,8 +138,8 @@ class UserGroupsView(ViewSet):
     def removeGroup(self,request):
         try:
             log.info("ApiCallController api revoke user group")
-            group =Group.objects.get(id=request.data["groupId"])
-            user = User.objects.get(id=request.data["userId"],)
+            group =Group.objects.get(id=request.data["groupId"],is_deleted=False)
+            user = User.objects.get(id=request.data["userId"],is_deleted=False)
             if group and user:
                 user.groups.remove(group)
                 return Response({"error" : False , "Message": "user successfully removed from the group","status": 200}, status=status.HTTP_200_OK)
