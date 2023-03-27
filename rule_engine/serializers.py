@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 from rest_framework import serializers
 
-from rule_engine.models import TBLRules, CommonMaster, TBLRulesSet
+from rule_engine.models import TBLRules, CommonMaster, TBLRulesSet,TBLRuleFunctionsOperation
 
 class TBLRulesSerializer(serializers.ModelSerializer):   
     # created_user= serializers.SerializerMethodField()
@@ -29,4 +29,8 @@ class TBLRulesSetSerializer(serializers.ModelSerializer):
         model = TBLRulesSet
         fields = ('rules_set_id', 'rules_set_name', 'rules_set_sequence', 'rules_id', 'extras', 'is_deleted', 'isActive',  'created_user', 'created_at', 'updated_user', 'updated_at')
 
- 
+class TBLRulesFunctionOperationSerializer(serializers.ModelSerializer):   
+
+    class Meta:
+        model = TBLRuleFunctionsOperation
+        fields = ('functions_id', 'functions_name', 'isFuntion', 'isOpertion', 'extras', 'is_deleted', 'isActive',  'created_user', 'created_at', 'updated_user', 'updated_at')

@@ -18,8 +18,9 @@ from django.urls import path
 from rule_engine.views import RuleEngineView, CommonMasterView
 from account.views import UserOperationView
 from account.userGroup import UserGroupsView
-from rule_engine.rules_set import RuleSetEngineView 
+from rule_engine.rules_set import RuleSetEngineView
 from connection.views import ConnectionHistoryView, ConnectionViewSet, NlpAnalysisView
+from rule_engine.FunctionsOperations import RuleEngineFunctionalOperationView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -70,5 +71,12 @@ urlpatterns = [
     path('users/groupview/', UserGroupsView.as_view({'post':'view'})),
     path('users/addtogroup/', UserGroupsView.as_view({'post':'addToGroup'})),
     path('users/removegroup/', UserGroupsView.as_view({'post':'removeGroup'})),
-    
+
+    path('rule/functionOperation/create/', RuleEngineFunctionalOperationView.as_view({'post':'create'})),
+    path('rule/functionOperation/update/', RuleEngineFunctionalOperationView.as_view({'post':'update'})),
+    path('rule/functionOperation/delete/', RuleEngineFunctionalOperationView.as_view({'post':'delete'})),
+    path('rule/functionOperation/list/', RuleEngineFunctionalOperationView.as_view({'post':'list'})),
+    path('rule/functionOperation/view/', RuleEngineFunctionalOperationView.as_view({'post':'view'})),
+    path('rule/functionOperation/viewby/', RuleEngineFunctionalOperationView.as_view({'post':'viewby'})),
+
 ]
