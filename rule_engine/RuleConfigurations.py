@@ -6,14 +6,150 @@ from rest_framework import serializers, status
 from django.db.models import Q
 from django.conf import settings
 from rule_engine.models import TBLRuleFunctionsOperation
-from rule_engine.serializers import TBLRulesFunctionOperationSerializer
-from rule_engine.controller.RuleFunctionalOperationsController import RuleFunctionalOperationsController
+from rule_engine.serializers import TBLRulesConfigurationsSerializer,TBLRulesEngineAuditSerializer,TBLRulesConfigurationConditionsSerializer,TBLRulesGroupsSerializer,TBLRulesConfigurationValueSerializer,TBLRulesFunctionOperationSerializer
+from rule_engine.controller.CommonController import CommonController
 import logging
 import datetime
 
 log = logging.getLogger(__name__)
 pattern = "\W"
 
+
+class RuleEngineConfigurationsView(ViewSet):
+
+    def create(self,request):
+        """Return a http response
+
+        Optional plotz says to frobnicate the bizbaz first.
+        """
+        try:
+            log.info(request.data)
+            if request.method == "POST":
+                if request.data:
+                    inserted_data = CommonController.ruleConfigurationsInsertDetails(self,request)
+                    if 'error' not in inserted_data:
+                        configuration_data = TBLRulesConfigurationsSerializer(data=inserted_data)
+                        if configuration_data.is_valid():
+                            tm_inserted_id=configuration_data.save() 
+                            data = { "rules_config_id" : tm_inserted_id.rules_config_id } 
+                            return Response( {"error": False, "message": "Rule configuration created successfully",  "status": 200, "data" : data } , status=status.HTTP_200_OK)
+                        else:
+                            return Response({"error": True, "message": str(configuration_data.errors), "status": 400}, status=status.HTTP_400_BAD_REQUEST)   
+                    else:
+                        return Response({"error": True, "message": 'failed to create configuration data ', "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as ex:
+            return Response({"error": True, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class RuleEngineConfigurationConditionsView(ViewSet):
+
+    def create(self,request):
+        """Return a http response
+
+        Optional plotz says to frobnicate the bizbaz first.
+        """
+        try:
+            log.info(request.data)
+            if request.method == "POST":
+                if request.data:
+                    inserted_data = CommonController.ruleConfigurationConditionInsertDetails(self,request)
+                    if 'error' not in inserted_data:
+                        configuration_data = TBLRulesConfigurationConditionsSerializer(data=inserted_data)
+                        if configuration_data.is_valid():
+                            tm_inserted_id=configuration_data.save()
+                            data = { "rcc_id" : tm_inserted_id.rcc_id } 
+                            return Response( {"error": False, "message": "Rule configuration created successfully",  "status": 200, "data" : data } , status=status.HTTP_200_OK)
+                        else:
+                            return Response({"error": True, "message": str(configuration_data.errors), "status": 400}, status=status.HTTP_400_BAD_REQUEST)   
+                    else:
+                        return Response({"error": True, "message": 'failed to create configuration data ', "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as ex:
+            return Response({"error": True, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        
+
+class RuleEngineConfigurationValueView(ViewSet):
+
+    def create(self,request):
+        """Return a http response
+
+        Optional plotz says to frobnicate the bizbaz first.
+        """
+        try:
+            log.info(request.data)
+            if request.method == "POST":
+                if request.data:
+                    inserted_data = CommonController.ruleConfigurationValueInsertDetails(self,request)
+                    if 'error' not in inserted_data:
+                        configuration_data = TBLRulesConfigurationValueSerializer(data=inserted_data)
+                        if configuration_data.is_valid():
+                            tm_inserted_id=configuration_data.save()
+                            data = { "rcv_id" : tm_inserted_id.rcv_id } 
+                            return Response( {"error": False, "message": "Rule configuration created successfully",  "status": 200, "data" : data } , status=status.HTTP_200_OK)
+                        else:
+                            return Response({"error": True, "message": str(configuration_data.errors), "status": 400}, status=status.HTTP_400_BAD_REQUEST)   
+                    else:
+                        return Response({"error": True, "message": 'failed to create configuration data ', "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as ex:
+            return Response({"error": True, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RuleEngineGroupsView(ViewSet):
+
+    def create(self,request):
+        """Return a http response
+
+        Optional plotz says to frobnicate the bizbaz first.
+        """
+        try:
+            log.info(request.data)
+            if request.method == "POST":
+                if request.data:
+                    inserted_data = CommonController.ruleGroupInsertDetails(self,request)
+                    if 'error' not in inserted_data:
+                        configuration_data = TBLRulesGroupsSerializer(data=inserted_data)
+                        if configuration_data.is_valid():
+                            tm_inserted_id=configuration_data.save()
+                            data = { "rules_group_id" : tm_inserted_id.rules_group_id } 
+                            return Response( {"error": False, "message": "Rule configuration created successfully",  "status": 200, "data" : data } , status=status.HTTP_200_OK)
+                        else:
+                            return Response({"error": True, "message": str(configuration_data.errors), "status": 400}, status=status.HTTP_400_BAD_REQUEST)   
+                    else:
+                        return Response({"error": True, "message": 'failed to create configuration data ', "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as ex:
+            return Response({"error": True, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RuleEngineAuditView(ViewSet):
+
+    def create(self,request):
+        """Return a http response
+
+        Optional plotz says to frobnicate the bizbaz first.
+        """
+        try:
+            log.info(request.data)
+            if request.method == "POST":
+                if request.data:
+                    inserted_data = CommonController.ruleAuditInsertDetails(self,request)
+                    if 'error' not in inserted_data:
+                        configuration_data = TBLRulesEngineAuditSerializer(data=inserted_data)
+                        if configuration_data.is_valid():
+                            tm_inserted_id=configuration_data.save()
+                            data = { "rules_audit_id" : tm_inserted_id.rules_audit_id } 
+                            return Response( {"error": False, "message": "Rule configuration created successfully",  "status": 200, "data" : data } , status=status.HTTP_200_OK)
+                        else:
+                            return Response({"error": True, "message": str(configuration_data.errors), "status": 400}, status=status.HTTP_400_BAD_REQUEST)   
+                    else:
+                        return Response({"error": True, "message": 'failed to create configuration data ', "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as ex:
+            return Response({"error": True, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        
+   
 class RuleEngineFunctionalOperationView(ViewSet):
 
     def create(self,request):
@@ -22,10 +158,12 @@ class RuleEngineFunctionalOperationView(ViewSet):
             if request.method == "POST":  
                 if request.data:
                     try:
+                        # existing record check
                         existing_record = TBLRuleFunctionsOperation.objects.get(functions_name=request.data['functions_name'])
                         return Response({"error": True, "message": 'record already exist', "status": 400}, status=status.HTTP_400_BAD_REQUEST)      
                     except TBLRuleFunctionsOperation.DoesNotExist:
                         if request.data['created_user'] and "created_user" in request.data:
+                            # create record 
                             record = TBLRuleFunctionsOperation.objects.create(functions_name=request.data["functions_name"],isOpertion=request.data["isOperation"]
                                                                           ,isFuntion=request.data["isFunction"],is_deleted=request.data["is_deleted"],
                                                                           isActive=request.data["isActive"],extras = request.data["extras"],created_user=request.data["created_user"],
@@ -39,6 +177,7 @@ class RuleEngineFunctionalOperationView(ViewSet):
                 else:
                     return Response({"error": False, "message": "data missing", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
+            # Application falure content
             log.error(ex)
             return Response({"error": True, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -51,7 +190,7 @@ class RuleEngineFunctionalOperationView(ViewSet):
                 if request.data:
                     try:
                         existing_record = TBLRuleFunctionsOperation.objects.get(functions_id=request.data['functions_id'])
-                        updated_data = RuleFunctionalOperationsController.ruleFunctionalOperationsDetails(self,request)
+                        updated_data = CommonController.ruleFunctionalOperationsDetails(self,request)
                         user_data = TBLRulesFunctionOperationSerializer(existing_record,data=updated_data,partial=True)
                         if user_data.is_valid():
                             obj = user_data.save()
@@ -80,6 +219,7 @@ class RuleEngineFunctionalOperationView(ViewSet):
                             not_active = {
                                 "is_deleted":"True"
                             }
+                            # putting delete = true 
                             datas = TBLRulesFunctionOperationSerializer(delete_user,data=not_active,partial=True)
                             if datas.is_valid():
                                 obj = datas.save()
@@ -148,3 +288,4 @@ class RuleEngineFunctionalOperationView(ViewSet):
         except Exception as ex:
             log.error(ex)
             return Response({"error": False, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+
