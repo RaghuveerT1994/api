@@ -16,7 +16,7 @@ class userShowSerializer(serializers.HyperlinkedModelSerializer):
 class userDeleteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta():
         model=User
-        fields=("id","is_active")
+        fields=("id","is_active","is_deleted")
 
 class UserChangePasswordSerializer(serializers.HyperlinkedModelSerializer):
     class Meta():
