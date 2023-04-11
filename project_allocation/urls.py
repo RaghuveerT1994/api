@@ -20,7 +20,7 @@ from account.views import UserOperationView
 from account.userGroup import UserGroupsView
 from rule_engine.rules_set import RuleSetEngineView
 from connection.views import ConnectionHistoryView, ConnectionViewSet, NlpAnalysisView
-from rule_engine.FunctionsOperations import RuleEngineFunctionalOperationView
+from rule_engine.RuleConfigurations import RuleEngineConfigurationsView,RuleEngineConfigurationConditionsView,RuleEngineConfigurationValueView,RuleEngineGroupsView,RuleEngineFunctionalOperationView,RuleEngineAuditView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -78,5 +78,20 @@ urlpatterns = [
     path('rule/functionOperation/list/', RuleEngineFunctionalOperationView.as_view({'post':'list'})),
     path('rule/functionOperation/view/', RuleEngineFunctionalOperationView.as_view({'post':'view'})),
     path('rule/functionOperation/viewby/', RuleEngineFunctionalOperationView.as_view({'post':'viewby'})),
+
+    path('rule/configurations/create/', RuleEngineConfigurationsView.as_view({'post':'create'})),
+
+    path('rule/configurationCondition/create/', RuleEngineConfigurationConditionsView.as_view({'post':'create'})),
+
+    path('rule/configurationValue/create/', RuleEngineConfigurationValueView.as_view({'post':'create'})),
+
+    path('rule/group/create/', RuleEngineGroupsView.as_view({'post':'create'})),
+
+    path('rule/audit/create/', RuleEngineAuditView.as_view({'post':'create'})),
+
+
+    
+
+
 
 ]
