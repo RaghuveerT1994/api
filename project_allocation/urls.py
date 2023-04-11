@@ -64,14 +64,14 @@ urlpatterns = [
     path('users/view/', UserOperationView.as_view({'post':'view'})),
     path('users/changepassword/', UserOperationView.as_view({'post':'changepassword'})),
 
-    path('users/group/create/', UserGroupsView.as_view({'post':'create'})), # in default django user group
-    path('users/group/update/', UserGroupsView.as_view({'post':'update'})),
-    path('users/group/delete/', UserGroupsView.as_view({'post':'delete'})),
-    path('users/group/list/', UserGroupsView.as_view({'post':'list'})),
-    path('users/group/view/', UserGroupsView.as_view({'post':'view'})),
-    path('users/group/addtogroup/', UserGroupsView.as_view({'post':'addToGroup'})),
+    path('group/create/', UserGroupsView.as_view({'post':'create'})), # in default django user group
+    path('group/update/', UserGroupsView.as_view({'post':'update'})),
+    path('group/delete/', UserGroupsView.as_view({'post':'delete'})),
+    path('group/list/', UserGroupsView.as_view({'post':'list'})),
+    path('group/view/', UserGroupsView.as_view({'post':'view'})),
+    path('users/group/add/', UserGroupsView.as_view({'post':'addToGroup'})),
     path('users/group/remove/', UserGroupsView.as_view({'post':'removeGroup'})),
-    path('users/group/name/', UserGroupsView.as_view({'post':'listOfGroupByUser'})),
+    path('users/group/list/', UserGroupsView.as_view({'post':'listOfGroupByUser'})),
 
 
     path('rule/functionOperation/create/', RuleEngineFunctionalOperationView.as_view({'post':'create'})),
