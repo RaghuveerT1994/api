@@ -225,9 +225,9 @@ class RuleEngineFunctionalOperationView(ViewSet):
                                 obj = datas.save()
                                 return Response({"error": False, "message": "record deleted successfully", "status": 200}, status=status.HTTP_200_OK)
                         else:
-                            return Response({"error":True , "Message" : "data not found" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                            return Response({"error":True , "message" : "data not found" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
                     except TBLRuleFunctionsOperation.DoesNotExist:
-                        return Response({"error":True , "Message" : "record not found" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"error":True , "message" : "record not found" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
                     # existing_record = User.objects.filter(id=request.data["id"]).update(is_active=False)
                 else:
                     return Response({"error": False, "message": "failed", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
@@ -241,9 +241,9 @@ class RuleEngineFunctionalOperationView(ViewSet):
             if not request.data:
                 user_data = TBLRuleFunctionsOperation.objects.filter(is_deleted=False)
                 show_data = TBLRulesFunctionOperationSerializer(user_data,many=True)
-                return Response({"error": False, "message": "success", "status": 200,"Data":show_data.data}, status=status.HTTP_200_OK)
+                return Response({"error": False, "message": "success", "status": 200,"data":show_data.data}, status=status.HTTP_200_OK)
             else:
-                return Response({"error":True , "Message" : "something went wrong" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error":True , "message" : "something went wrong" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
             log.error(ex)
             return Response({"error": False, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
@@ -255,11 +255,11 @@ class RuleEngineFunctionalOperationView(ViewSet):
                 user_data = TBLRuleFunctionsOperation.objects.filter(pk=request.data['functions_id'],is_deleted=False) 
                 if user_data:
                     show_data = TBLRulesFunctionOperationSerializer(user_data,many=True) 
-                    return Response({"error": False, "message": "success", "status": 200,"Data":show_data.data}, status=status.HTTP_200_OK)
+                    return Response({"error": False, "message": "success", "status": 200,"data":show_data.data}, status=status.HTTP_200_OK)
                 else:
-                    return Response({"error":True , "Message" : "please put valid user id" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"error":True , "message" : "please put valid user id" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({"error":True , "Message" : "functions id should not null " , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error":True , "message" : "functions id should not null " , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
             log.error(ex)
             return Response({"error": False, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
@@ -272,19 +272,19 @@ class RuleEngineFunctionalOperationView(ViewSet):
                     try:
                         user_data = TBLRuleFunctionsOperation.objects.filter(isOpertion=request.data['isOperation'],is_deleted=False,isActive=True)
                         show_data = TBLRulesFunctionOperationSerializer(user_data,many=True) 
-                        return Response({"error": False, "message": "success", "status": 200,"Data":show_data.data}, status=status.HTTP_200_OK)
+                        return Response({"error": False, "message": "success", "status": 200,"data":show_data.data}, status=status.HTTP_200_OK)
                     except:  
                         try:
                             user_data = TBLRuleFunctionsOperation.objects.filter(isFuntion=request.data['isFunction'],is_deleted=False,isActive=True)
                             show_data = TBLRulesFunctionOperationSerializer(user_data,many=True) 
-                            return Response({"error": False, "message": "success", "status": 200,"Data":show_data.data}, status=status.HTTP_200_OK)
+                            return Response({"error": False, "message": "success", "status": 200,"data":show_data.data}, status=status.HTTP_200_OK)
                         except Exception as ex:
                             log.error(ex)
                             return Response({"error": False, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({"error":True , "Message" : "function and operation condition can't be same at the same time" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"error":True , "message" : "function and operation condition can't be same at the same time" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({"error":True , "Message" : "Please provide condition function and operation " , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error":True , "message" : "Please provide condition function and operation " , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
             log.error(ex)
             return Response({"error": False, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)

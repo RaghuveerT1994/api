@@ -89,24 +89,25 @@ class UserOperationView(ViewSet):
         
 
 
-    def delete(self,request,id):
+    def delete(self,request):
         try:
             log.info("ApiCallController api delete user")
-            if id:
+            if request.data:
                 try:
-                    delete_user = User.objects.get(id=id,is_active=True)
+                    delete_user = User.objects.get(pk=request.data['userId'],is_deleted=False)
                     if delete_user:
                         not_active = {
-                            "is_active":"False"
+                            "is_active":"False",
+                            "is_deleted": "True"
                         }
                         datas = userDeleteSerializer(delete_user,data=not_active)
                         if datas.is_valid():
                             obj = datas.save()
-                            return Response({"error": False, "message": "user record updated", "status": 200}, status=status.HTTP_200_OK)
+                            return Response({"error": False, "message": "user Deleted successfully", "status": 200}, status=status.HTTP_200_OK)
                     else:
-                        return Response({"error":True , "Message" : "data not found" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"error":True , "message" : "data not found" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
                 except User.DoesNotExist:
-                    return Response({"error":True , "Message" : "record not found" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"error":True , "message" : "record not found" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
                 # existing_record = User.objects.filter(id=request.data["id"]).update(is_active=False)
             else:
                 return Response({"error": False, "message": "failed", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
@@ -121,9 +122,9 @@ class UserOperationView(ViewSet):
             if not request.data:
                 user_data = User.objects.filter(is_active=True)
                 show_data = userShowSerializer(user_data,many=True)
-                return Response({"error": False, "message": "success", "status": 200,"Data":show_data.data}, status=status.HTTP_200_OK)
+                return Response({"error": False, "message": "success", "status": 200,"data":show_data.data}, status=status.HTTP_200_OK)
             else:
-                return Response({"error":True , "Message" : "something went wrong" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error":True , "message" : "something went wrong" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
             log.error(ex)
             return Response({"error": False, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
@@ -135,11 +136,11 @@ class UserOperationView(ViewSet):
                 user_data = User.objects.filter(pk=request.data['id'],is_active=True) 
                 if user_data:
                     show_data = userShowSerializer(user_data,many=True) 
-                    return Response({"error": False, "message": "success", "status": 200,"Data":show_data.data}, status=status.HTTP_200_OK)
+                    return Response({"error": False, "message": "success", "status": 200,"data":show_data.data}, status=status.HTTP_200_OK)
                 else:
-                    return Response({"error":True , "Message" : "please put valid user id" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"error":True , "message" : "please put valid user id" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({"error":True , "Message" : "id required" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error":True , "message" : "id required" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
             log.error(ex)
             return Response({"error": False, "message": f"we would like to inform you {ex}", "status": 400}, status=status.HTTP_400_BAD_REQUEST)
@@ -154,17 +155,17 @@ class UserOperationView(ViewSet):
                     if request.data['password'] and request.data['confirmpassword'] and 'password' in request.data:
                         pass_data = userController.UserController.changepassword(self,request,self.pass_reg)
                         if 'error' in pass_data:
-                            return Response({"error":True , "Message" : "please put valid password and confirmpassword and both sould match" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                            return Response({"error":True , "message" : "please put valid password and confirmpassword and both sould match" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
                         cp_details = UserChangePasswordSerializer(user_data,data = pass_data)
                         if cp_details.is_valid():
                             obj = cp_details.save()
                             return Response({"error": False, "message": "password changed successfully", "status": 200}, status=status.HTTP_200_OK)
                     else:
-                        return Response({"error":True , "Message" : "password and confirmpassword required" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"error":True , "message" : "password and confirmpassword required" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({"error":True , "Message" : "you dont have authorize to change password" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"error":True , "message" : "you dont have authorize to change password" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
             log.error(ex)
-            return Response({"error":True , "Message" : f"we would like to inform you {ex}" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error":True , "message" : f"we would like to inform you {ex}" , "status" : 400}, status=status.HTTP_400_BAD_REQUEST)
 
 
