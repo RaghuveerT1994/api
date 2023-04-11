@@ -44,7 +44,7 @@ class UserOperationView(ViewSet):
                             return Response({"error": False, "message": 'failed (email already exist)', "status": 200}, status=status.HTTP_200_OK)
                         except User.DoesNotExist:
                             user = User.objects.create_user(username=request.data['username'],email=request.data['email'],first_name=request.data['first_name'],
-                                                            last_name=request.data['last_name'],is_active=request.data['active'])
+                                                            last_name=request.data['last_name'],is_active=request.data['is_active'])
                        
                             return Response({"error": False, "message": 'User Added Successfully', "status": 200}, status=status.HTTP_200_OK) 
                 else:
