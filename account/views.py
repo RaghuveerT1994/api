@@ -33,28 +33,25 @@ class UserOperationView(ViewSet):
         try:
             log.info("ApiCallController api create user")
             if request.method == "POST":     
-                if request.data["password"]==request.data["confirmpassword"] and len(request.data["password"]) != 0:
-                    valid = re.compile(self.pass_reg)
-                    if re.fullmatch(self.mail_regex, request.data['email']) and re.search(valid,request.data['password']) :
+                valid = re.compile(self.pass_reg)
+                if re.fullmatch(self.mail_regex, request.data['email']):
+                    try:
+                        User.objects.get(username=request.data['username'])
+                        return Response({"error": False, "message": 'failed (username already exist)', "status": 200}, status=status.HTTP_200_OK)
+                    except User.DoesNotExist:
                         try:
-                            User.objects.get(username=request.data['username'])
-                            return Response({"error": False, "message": 'failed (username already exist)', "status": 200}, status=status.HTTP_200_OK)
+                            User.objects.get(email=request.data['email'])
+                            return Response({"error": False, "message": 'failed (email already exist)', "status": 200}, status=status.HTTP_200_OK)
                         except User.DoesNotExist:
-                            try:
-                                User.objects.get(email=request.data['email'])
-                                return Response({"error": False, "message": 'failed (email already exist)', "status": 200}, status=status.HTTP_200_OK)
-                            except User.DoesNotExist:
-                                user = User.objects.create_user(username=request.data['username'],password = make_password(request.data['password']),
-                                                                email=request.data['email'],first_name=request.data['first_name'],
-                                                                last_name=request.data['last_name'],is_staff=request.data['staff_status'],
-                                                                is_active=request.data['active'],is_superuser=request.data['superuser'])
-                                login(request,user)
-                                return Response({"error": False, "message": 'User Added Successfully', "status": 200}, status=status.HTTP_200_OK) 
-                    else:
-                        return Response({"error": True, "message": 'failed to add user valid email and password required', "status": 400}, status=status.HTTP_400_BAD_REQUEST)
-
+                            user = User.objects.create_user(username=request.data['username'],email=request.data['email'],first_name=request.data['first_name'],
+                                                            last_name=request.data['last_name'],is_active=request.data['is_active'])
+                       
+                            return Response({"error": False, "message": 'User Added Successfully', "status": 200}, status=status.HTTP_200_OK) 
                 else:
-                    return Response({"error": True, "message": 'failed to add user valid password required', "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"error": True, "message": 'failed to add user valid email and password required', "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+
+            else:
+                return Response({"error": True, "message": 'failed to add user valid password required', "status": 400}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception  as ex:
             log.error(ex)
@@ -120,7 +117,7 @@ class UserOperationView(ViewSet):
         try:
             log.info("ApiCallController api list")
             if not request.data:
-                user_data = User.objects.filter(is_active=True)
+                user_data = User.objects.filter(is_deleted=False)
                 show_data = userShowSerializer(user_data,many=True)
                 return Response({"error": False, "message": "success", "status": 200,"data":show_data.data}, status=status.HTTP_200_OK)
             else:
@@ -133,7 +130,7 @@ class UserOperationView(ViewSet):
         try:
             log.info("ApiCallController api view")
             if request.data["id"]:
-                user_data = User.objects.filter(pk=request.data['id'],is_active=True) 
+                user_data = User.objects.filter(pk=request.data['id'],is_deleted=False) 
                 if user_data:
                     show_data = userShowSerializer(user_data,many=True) 
                     return Response({"error": False, "message": "success", "status": 200,"data":show_data.data}, status=status.HTTP_200_OK)
@@ -150,8 +147,8 @@ class UserOperationView(ViewSet):
         try:
             log.info("ApiCallController api changepassword")
             if request.data:
-                user_data = User.objects.get(pk=request.data['id'])
-                if user_data.is_superuser ==True and user_data.is_active == True:
+                user_data = User.objects.get(pk=request.data['id'],is_deleted=False)
+                if user_data.is_active == True:
                     if request.data['password'] and request.data['confirmpassword'] and 'password' in request.data:
                         pass_data = userController.UserController.changepassword(self,request,self.pass_reg)
                         if 'error' in pass_data:
